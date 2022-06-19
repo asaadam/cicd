@@ -1,0 +1,59 @@
+name : Build 
+on : 
+  push:
+    branches: 
+    - master
+  pull_request:
+    branches: 
+    - master
+    
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+    - name : go mod
+      run : go mod tidy
+    - name: Build
+      run: go build -v ./... -o cicd 
+    - uses: actions/upload-artifact@v3
+      with:
+        name: build-cicd
+        path: cicd
+  
+  uploadAndDeploy :
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: build-cicd
+          
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ../private.key
+          sudo chmod 600 ../private.key
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.SECRET_KEY}}
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
+          
+      - name : sftp connect
+        run : sftp -i ../private.key adam@34.121.123.185 
+        
+      - name : upload file
+        run : put cicd
+      - name : exit sftp
+        run : exit
+      - name : ssh connect
+        run : ssh -i ../private.key adam@34.121.123.185 
+      - name : deploy 
+        run : ./cicd
+      
+      
