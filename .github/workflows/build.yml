@@ -53,7 +53,7 @@ jobs:
       - name : exit sftp
         run : exit
       - name : ssh connect
-        run : ssh -i ../private.key adam@34.121.123.185 
+        run : ssh -i ~/.ssh/private.key adam@34.121.123.185 
       - name : deploy 
         run : ./cicd
       
