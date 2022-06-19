@@ -38,17 +38,17 @@ jobs:
       - name: Create SSH key
         run: |
           mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" > ../.ssh/private.key
-          sudo chmod 600 ../.ssh/private.key
+          echo "$SSH_PRIVATE_KEY" > ../private.key
+          sudo chmod 600 ../private.key
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.SECRET_KEY}}
-          SSH_KEY_PATH: ${{ github.workspace }}/../.ssh/private.key
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
           
       - name : sftp connect
         run : sftp -i $SSH_KEY_PATH adam@34.121.123.185 
         env :
-          SSH_KEY_PATH: ${{ github.workspace }}/../.ssh/private.key
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
 
       - name : upload file
         run : put cicd
@@ -57,7 +57,7 @@ jobs:
       - name : ssh connect
         run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 
         env :
-          SSH_KEY_PATH: ${{ github.workspace }}/../.ssh/private.key
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
       - name : deploy 
         run : ./cicd
       
