@@ -20,7 +20,7 @@ jobs:
     - name : go mod
       run : go mod tidy
     - name: Build
-      run: go build -v ./... -o cicd 
+      run: go build -v -o cicd server.go
     - uses: actions/upload-artifact@v3
       with:
         name: build-cicd
