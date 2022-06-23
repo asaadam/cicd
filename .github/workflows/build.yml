@@ -49,7 +49,7 @@ jobs:
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
           
       - name : scp transfer file 
-        run : scp -i $SSH_KEY_PATH ./cicd adam@34.121.123.185:/
+        run : scp -i $SSH_KEY_PATH ./cicd adam@34.121.123.185:/home/adam
         env :
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
       - name : ssh connect and deploy
