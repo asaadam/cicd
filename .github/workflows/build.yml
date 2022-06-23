@@ -49,19 +49,13 @@ jobs:
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
           
       - name : sftp connect
-        run : sftp -i $SSH_KEY_PATH adam@34.121.123.185 
+        run : scp -i $SSH_KEY_PATH adam@34.121.123.185 ./cicd .
         env :
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
-
-      - name : upload file
-        run : put cicd
-      - name : exit sftp
-        run : exit
-      - name : ssh connect
-        run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 
+      - name : ssh connect and deploy
+        run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 './cicd'
         env :
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
-      - name : deploy 
-        run : ./cicd
+ 
       
       
