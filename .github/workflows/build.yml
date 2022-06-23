@@ -53,7 +53,7 @@ jobs:
         env :
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
       - name : ssh connect and deploy
-        run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 './cicd'
+        run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 './home/adam/cicd'
         env :
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
  
