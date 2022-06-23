@@ -48,6 +48,11 @@ jobs:
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
           
+      - name : killing current process
+        run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 -f 'sudo kill -9 `sudo lsof -t -i:80`'
+        env :
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
+          
       - name : scp transfer file 
         run : scp -i $SSH_KEY_PATH ./cicd adam@34.121.123.185:/home/adam
         env :
