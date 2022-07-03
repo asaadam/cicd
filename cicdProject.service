@@ -4,7 +4,7 @@ Description=Learn Cicd
 [Service]
 Type=simple
 Restart=always
-ExecStart= /Users/adam/project/cicd
+ExecStart= /home/adam
 
 [Install]
 WantedBy=multi-user.target
