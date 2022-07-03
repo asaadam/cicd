@@ -1,0 +1,10 @@
+[Unit]
+Description=Learn Cicd
+
+[Service]
+Type=simple
+Restart=always
+ExecStart= /Users/adam/project/cicd
+
+[Install]
+WantedBy=multi-user.target

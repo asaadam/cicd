@@ -54,11 +54,14 @@ jobs:
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
           
       - name : scp transfer file 
-        run : scp -i $SSH_KEY_PATH ./cicd adam@34.121.123.185:/home/adam
+        run : | 
+              scp -i $SSH_KEY_PATH ./cicd adam@34.121.123.185:/home/adam
+              scp -i $SSH_KEY_PATH ./cicdProject.service adam@34.121.123.185:/etc/systemd/system
         env :
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
+          
       - name : ssh connect and deploy
-        run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 -f 'chmod 777 cicd && sudo ./cicd'
+        run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 -f 'chmod 777 cicd && sudo ./cicd && sudo systemctl daemon-reload && sudo systemctl enable cicdProject.service && sudo systemctl start cicdProject.service'
         env :
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
  
