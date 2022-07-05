@@ -49,7 +49,7 @@ jobs:
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
       
       - name : kill service if it's running
-        run : sudo systemctl stop cicdProject.service
+        run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 -f sudo systemctl stop cicdProject.service
 
       - name : add premission to write in systemd
         run : | 
