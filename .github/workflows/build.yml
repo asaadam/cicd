@@ -67,7 +67,7 @@ jobs:
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
           
       - name : ssh connect and deploy
-        run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 -f 'chmod 777 cicd && sudo ./cicd && sudo systemctl daemon-reload && sudo systemctl enable cicdProject.service && sudo systemctl start cicdProject.service'
+        run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 -f 'chmod 777 cicd && sudo systemctl daemon-reload && sudo systemctl enable cicdProject.service && sudo systemctl start cicdProject.service'
         env :
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
  
