@@ -50,6 +50,8 @@ jobs:
       
       - name : kill service if it's running
         run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 -f 'sudo systemctl stop cicdProject.service'
+        env :
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
 
       - name : add premission to write in systemd
         run : | 
