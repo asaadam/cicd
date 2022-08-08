@@ -43,3 +43,4 @@ jobs:
           known_hosts: ${{secrets.SSH_KNOWN_HOSTS}}
           options: |
             -i inventory.yaml
+            -u adam
