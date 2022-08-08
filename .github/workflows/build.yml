@@ -1,75 +1,45 @@
-name : Build 
-on : 
+name: Build
+on:
   workflow_dispatch:
   push:
-    branches: 
-    - master
+    branches:
+      - master
   pull_request:
-    branches: 
-    - master
-    
+    branches:
+      - master
+
 jobs:
   test-build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+      - name: go mod
+        run: go mod tidy
+      - name: Build
+        run: go build -v -o cicd server.go
+      - uses: actions/upload-artifact@v3
+        with:
+          name: build-cicd
+          path: cicd
 
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.18
-    - name : go mod
-      run : go mod tidy
-    - name: Build
-      run: go build -v -o cicd server.go
-    - uses: actions/upload-artifact@v3
-      with:
-        name: build-cicd
-        path: cicd
-  
-  uploadAndDeploy :
-    needs : test-build
+  uploadAndDeploy:
+    needs: test-build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/download-artifact@v3
         with:
           name: build-cicd
-          
-      - name: Create SSH key
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" > ../private.key
-          sudo chmod 600 ../private.key
-          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-        shell: bash
-        env:
-          SSH_PRIVATE_KEY: ${{secrets.SECRET_KEY}}
-          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
-          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
-      
-      - name : kill service if it's running
-        run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 -f 'sudo systemctl stop cicdProject.service'
-        env :
-          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
-
-      - name : add premission to write in systemd
-        run : | 
-              ssh -i $SSH_KEY_PATH adam@34.121.123.185 -f 'sudo chmod 777 /etc/systemd/system'
-        env :
-          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
-          
-      - name : scp transfer file 
-        run : | 
-              scp -i $SSH_KEY_PATH ./cicd adam@34.121.123.185:/home/adam
-              scp -i $SSH_KEY_PATH ./cicdProject.service adam@34.121.123.185:/etc/systemd/system
-        env :
-          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
-          
-      - name : ssh connect and deploy
-        run : ssh -i $SSH_KEY_PATH adam@34.121.123.185 -f 'chmod 777 cicd && sudo systemctl daemon-reload && sudo systemctl enable cicdProject.service && sudo systemctl start cicdProject.service'
-        env :
-          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
- 
-      
-      
+      - name: Run playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: ansible-playbook.yml
+          directory: ./
+          key: ${{secrets.SECRET_KEY}}
+          known_hosts: ${{secrets.SSH_KNOWN_HOSTS}}
+          options: |
+            -i inventory.yaml

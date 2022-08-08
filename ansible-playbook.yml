@@ -1,0 +1,22 @@
+- name: Playbook
+  hosts: all
+  become: yes
+  tasks:
+    - name: kill service when it's running
+      ansible.builtin.systemd:
+        name: cicdProject
+        state: stopped
+    - name: copy service file to systemd
+      ansible.builtin.copy:
+        src: cicdProject.service
+        dest: /etc/systemd/system/cicdProject.service
+    - name: copy binary file to home
+      ansible.builtin.copy:
+        src: cicd
+        dest: /home/adam/cicd
+    - name: restart and deploy service
+      ansible.builtin.systemd:
+        daemon_reload: yes
+        name: cicdProject
+        state: restarted
+        enabled: yes
